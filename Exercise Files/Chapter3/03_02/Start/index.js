@@ -13,8 +13,15 @@ server.route( [
     {
         method: 'GET',
         path: '/api/tours',
+        config: {json:{space:2}},
         handler: function(request, reply) {
-            reply ("Getting tour list!");
+            var findObject = {};
+            for(var key in request.query){
+                findObject[key] = request.query[key];
+            }
+            collection.find(findObject).toArray((error, tours) => {
+                reply(tours)
+            })
         }
     },
     // Add new tour
@@ -30,7 +37,9 @@ server.route( [
         method: 'GET',
         path: '/api/tours/{name}',
         handler: function(request, reply) {
-            reply ("Retrieving " + request.params.name);
+           collection.findOne({"tourName": request.params.name}, (error, tour) => {
+               reply(tour)
+           })
         }
     },
     // Update a single tour
